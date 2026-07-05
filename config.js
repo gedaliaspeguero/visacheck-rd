@@ -26,6 +26,8 @@ const CONFIG = {
   },
 
   RESULT: {
+    probabilityLabel: "Probabilidad estimada de aprobación",
+    probabilityNote: "Estimación basada en los factores de tu perfil — no es una predicción oficial ni garantiza la decisión consular.",
     bandLabels: {
       fuerte: "Perfil fuerte",
       medio: "Perfil medio",

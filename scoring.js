@@ -37,6 +37,18 @@ function getBand(totalScore) {
   return BANDS.find((b) => totalScore >= b.min && totalScore <= b.max) || BANDS[BANDS.length - 1];
 }
 
+// "Probabilidad de aprobación" para marketing — no es un cálculo actuarial ni legal,
+// es una traducción directa del score (0-100) a un número más persuasivo para la
+// pantalla de resultado. Se limita entre MIN y MAX para nunca mostrar un 0% (lee
+// como "imposible") ni un 100% (lee como "garantizado"), lo cual sería una promesa
+// que no podemos respaldar. Ajusta estos dos números si quieres correr el rango.
+const APPROVAL_PCT_MIN = 12;
+const APPROVAL_PCT_MAX = 94;
+
+function computeApprovalPercentage(totalScore) {
+  return Math.round(Math.min(APPROVAL_PCT_MAX, Math.max(APPROVAL_PCT_MIN, totalScore)));
+}
+
 // Cada pregunta: id, pilar, texto, tipo (single|multi), opciones con puntos.
 // `capPoints` (solo en multiselect) limita la suma máxima de esa pregunta aunque
 // se marquen varias opciones que sumarían más — evita que una sola pregunta
@@ -262,6 +274,7 @@ function computeResult(answers) {
   const total = Object.values(pillarScores).reduce((a, b) => a + b, 0);
   const band = getBand(total);
   const flags = computeFlags(answers);
+  const approvalPercentage = computeApprovalPercentage(total);
 
   return {
     total,
@@ -270,6 +283,7 @@ function computeResult(answers) {
     pillarScores,
     pillarMax: PILLAR_MAX,
     flags,
+    approvalPercentage,
   };
 }
 

@@ -8,6 +8,7 @@ const state = {
 };
 
 let isTransitioning = false;
+const GAUGE_RADIUS = 52;
 
 const stage = document.getElementById("screenStage");
 const progressHeader = document.getElementById("progressHeader");
@@ -240,8 +241,23 @@ function renderResult() {
     })
     .join("");
 
+  const gaugeCircumference = 2 * Math.PI * GAUGE_RADIUS;
+
   el.innerHTML = `
     <p class="question-pillar">Tu resultado</p>
+    <div class="gauge-wrap">
+      <svg class="gauge-svg" viewBox="0 0 120 120">
+        <circle class="gauge-track" cx="60" cy="60" r="${GAUGE_RADIUS}" />
+        <circle class="gauge-fill" cx="60" cy="60" r="${GAUGE_RADIUS}"
+          data-pct="${result.approvalPercentage}"
+          style="stroke-dasharray:${gaugeCircumference};stroke-dashoffset:${gaugeCircumference}" />
+      </svg>
+      <div class="gauge-center">
+        <span class="gauge-pct">${result.approvalPercentage}%</span>
+        <span class="gauge-pct-label">${t.probabilityLabel}</span>
+      </div>
+    </div>
+    <p class="gauge-note">${t.probabilityNote}</p>
     <h2 class="result-band ${result.band}">${t.bandLabels[result.band]}</h2>
     <p class="result-tagline">${t.bandTaglines[result.band]}</p>
     <div class="pillars-chart">${pillarRows}</div>
@@ -261,6 +277,11 @@ function renderResult() {
       el.querySelectorAll(".pillar-bar-fill").forEach((bar) => {
         bar.style.width = `${bar.dataset.pct}%`;
       });
+      const gaugeFill = el.querySelector(".gauge-fill");
+      if (gaugeFill) {
+        const offset = gaugeCircumference - (gaugeCircumference * gaugeFill.dataset.pct) / 100;
+        gaugeFill.style.strokeDashoffset = offset;
+      }
     });
   });
 
