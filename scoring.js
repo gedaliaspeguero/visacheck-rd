@@ -139,6 +139,7 @@ const QUESTIONS = [
     options: [
       { value: "si", label: "Sí", points: 8 },
       { value: "no_hijos", label: "No tengo hijos", points: 3 },
+      { value: "extranjero", label: "Mis hijos viven en el extranjero (no en RD)", points: 2 },
       { value: "viajarian", label: "Viajarían conmigo", points: 0 },
     ],
   },
@@ -230,8 +231,9 @@ function computeFlags(answers) {
     flags.push({ code: "CPSD", label: "Cuenta propia sin poder documentar ingresos" });
   }
 
-  if (answers.q7_hijos === "no_hijos" && answers.q8_civil === "soltero") {
-    flags.push({ code: "SVF", label: "Vínculo familiar débil (sin hijos y soltero/a)" });
+  const sinHijosEnRD = answers.q7_hijos === "no_hijos" || answers.q7_hijos === "extranjero";
+  if (sinHijosEnRD && answers.q8_civil === "soltero") {
+    flags.push({ code: "SVF", label: "Vínculo familiar débil (sin hijos en RD y soltero/a)" });
   }
 
   return flags;
