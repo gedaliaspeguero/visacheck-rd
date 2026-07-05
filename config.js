@@ -4,7 +4,7 @@
 const CONFIG = {
   // Número de WhatsApp que recibe el diagnóstico. Formato internacional SIN "+" ni espacios.
   // Ejemplo RD: "18091234567" (1 + código de área + número).
-  WHATSAPP_NUMBER: "18095551234", // TODO: reemplazar por el número real antes de publicar
+  WHATSAPP_NUMBER: "19142901691",
 
   BRAND_NAME: "VisaCheck RD",
 
