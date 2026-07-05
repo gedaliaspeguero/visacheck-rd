@@ -296,6 +296,16 @@ button {
 }
 
 /* ---------- Result screen ---------- */
+.case-number {
+  text-align: center;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: var(--cream-dim);
+  font-variant-numeric: tabular-nums;
+  margin-bottom: 4px;
+}
+
 .gauge-wrap {
   position: relative;
   width: 180px;

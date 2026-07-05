@@ -5,10 +5,20 @@ const state = {
   questionIndex: 0,
   answers: {},
   userName: "",
+  caseNumber: null,
 };
 
 let isTransitioning = false;
 const GAUGE_RADIUS = 52;
+
+// Número de caso de 6 dígitos, solo para presentación (no hay backend todavía que
+// lo busque). Se genera una sola vez por sesión de quiz — ir "atrás" y volver al
+// resultado no debe cambiarlo.
+function ensureCaseNumber() {
+  if (!state.caseNumber) {
+    state.caseNumber = String(Math.floor(100000 + Math.random() * 900000));
+  }
+}
 
 const stage = document.getElementById("screenStage");
 const progressHeader = document.getElementById("progressHeader");
@@ -209,11 +219,11 @@ function renderNameCapture() {
   const input = el.querySelector("#nameInput");
   el.querySelector("#nameContinueBtn").addEventListener("click", () => {
     state.userName = input.value.trim();
-    transitionTo(() => { state.step = "result"; });
+    transitionTo(() => { state.step = "result"; ensureCaseNumber(); });
   });
   el.querySelector("#nameSkipBtn").addEventListener("click", () => {
     state.userName = "";
-    transitionTo(() => { state.step = "result"; });
+    transitionTo(() => { state.step = "result"; ensureCaseNumber(); });
   });
 
   return el;
@@ -245,6 +255,7 @@ function renderResult() {
 
   el.innerHTML = `
     <p class="question-pillar">Tu resultado</p>
+    <p class="case-number">Caso #${state.caseNumber}</p>
     <div class="gauge-wrap">
       <svg class="gauge-svg" viewBox="0 0 120 120">
         <circle class="gauge-track" cx="60" cy="60" r="${GAUGE_RADIUS}" />
@@ -291,7 +302,7 @@ function renderResult() {
 function openWhatsapp(result) {
   const t = CONFIG.RESULT;
   const code = encodeResultForWhatsapp(result);
-  const message = `${t.whatsappIntro(state.userName)}\n\n${code}`;
+  const message = `${t.whatsappIntro(state.userName, state.caseNumber)}\n\n${code}`;
   const url = `https://wa.me/${CONFIG.WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
   window.open(url, "_blank");
 }

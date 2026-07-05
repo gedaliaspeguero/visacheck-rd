@@ -83,3 +83,22 @@ VC:M|E:18|L:12|F:15|H:9|FLAGS:NEG,CPSD
 
 Así, cuando alguien te escribe, ya tienes su diagnóstico completo sin tener que
 preguntarle nada — funciona como un mini-CRM mientras validas el producto.
+
+El mensaje también incluye un **número de caso** de 6 dígitos (ej. `Caso #864960`),
+generado al azar en el navegador solo para que se vea más "oficial" — hoy no tiene
+ningún backend detrás que lo busque, es puramente de presentación.
+
+## Roadmap Fase 2 (todavía no construido)
+
+Idea comentada para cuando el volumen de casos justifique automatizar:
+
+- Un bot de WhatsApp que reciba el número de caso y responda con un menú:
+  1. Hablar con un agente migratorio.
+  2. Desbloquear el "test premium" (~$20): el usuario mete sus datos reales, el
+     bot dice que la respuesta tarda 10-15 min (aunque el análisis con IA tarde
+     segundos) y entrega un reporte con el detalle de por qué el cónsul
+     aprobaría/negaría, entrenado con casos migratorios reales.
+- Esto requiere backend + base de datos (guardar caso → respuestas → pago), algo
+  que el sitio estático actual no tiene. Cuando se construya, el número de caso
+  de 6 dígitos pasaría a ser la clave real en esa base de datos en vez de un
+  número aleatorio sin persistencia.

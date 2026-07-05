@@ -45,8 +45,8 @@ const CONFIG = {
     ctaWhatsapp: "Recibir mi evaluación completa por WhatsApp",
     ctaShare: "Compartir este test",
     shareText: "Hice el test de VisaCheck RD para evaluar mi perfil de visa americana. Pruébalo:",
-    whatsappIntro: (name) =>
-      `Hola, soy ${name || "un usuario"} y acabo de hacer el test de ${CONFIG.BRAND_NAME}. Este es mi resultado:`,
+    whatsappIntro: (name, caseNumber) =>
+      `Hola, soy ${name || "un usuario"} y acabo de hacer el test de ${CONFIG.BRAND_NAME}.\n\nCaso #${caseNumber}\n\nEste es mi resultado:`,
   },
 
   FOOTER_DISCLAIMER:
