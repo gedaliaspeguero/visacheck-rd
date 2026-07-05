@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="es-DO">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>VisaCheck RD — Evaluación de perfil B1/B2</title>
+<meta name="description" content="Evalúa gratis en 3 minutos qué tan preparado está tu perfil para la entrevista de visa americana B1/B2." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app" id="app">
+
+    <header class="progress-header" id="progressHeader" hidden>
+      <div class="progress-track">
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
+      <button class="back-btn" id="backBtn" aria-label="Volver">←</button>
+    </header>
+
+    <main class="screen-stage" id="screenStage">
+      <!-- las pantallas se inyectan aquí vía app.js -->
+    </main>
+
+    <footer class="app-footer">
+      <p id="footerDisclaimer"></p>
+    </footer>
+  </div>
+
+  <script src="config.js"></script>
+  <script src="scoring.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
