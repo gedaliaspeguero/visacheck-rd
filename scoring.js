@@ -96,14 +96,19 @@ const QUESTIONS = [
   {
     id: "q4_situacion",
     pillar: "laboral",
-    type: "single",
+    type: "multi",
     text: "¿Cuál es tu situación laboral?",
+    // Multiselect porque hay gente con más de una fuente de ingresos (ej. empleado
+    // formal que además tiene un negocio). capPoints = el máximo de una sola opción
+    // (empleado formal, 10) para que combinar respuestas nunca dispare el pilar por
+    // encima de PILLAR_MAX.laboral.
+    capPoints: 10,
     options: [
       { value: "empleado", label: "Empleado formal", points: 10 },
       { value: "cuenta_propia", label: "Cuenta propia / negocio", points: 8 },
       { value: "informal", label: "Informal", points: 4 },
       { value: "estudiante", label: "Estudiante", points: 5 },
-      { value: "no_trabajo", label: "No trabajo", points: 0 },
+      { value: "no_trabajo", label: "No trabajo", points: 0, exclusive: true },
     ],
   },
   {
@@ -227,7 +232,8 @@ function computeFlags(answers) {
     flags.push({ code: "FSE", label: "Familiar en EEUU sin estatus legal" });
   }
 
-  if (answers.q4_situacion === "cuenta_propia" && answers.q6_documentar === "no") {
+  const tieneCuentaPropia = Array.isArray(answers.q4_situacion) && answers.q4_situacion.includes("cuenta_propia");
+  if (tieneCuentaPropia && answers.q6_documentar === "no") {
     flags.push({ code: "CPSD", label: "Cuenta propia sin poder documentar ingresos" });
   }
 
