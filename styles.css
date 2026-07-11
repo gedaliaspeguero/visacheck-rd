@@ -6,6 +6,9 @@
   --ink-border: #3a322c;
   --coral: #e8674a;
   --coral-soft: rgba(232, 103, 74, 0.14);
+  --tier-green: #74c98c;
+  --tier-orange: #f0a860;
+  --tier-red: #e2493a;
   --cream: #f3ece4;
   --cream-dim: #b9aea5;
   --font-serif: "Cormorant Garamond", Georgia, serif;
@@ -334,6 +337,9 @@ button {
   stroke-linecap: round;
   transition: stroke-dashoffset 1s ease;
 }
+.gauge-fill.fuerte { stroke: var(--tier-green); }
+.gauge-fill.medio { stroke: var(--tier-orange); }
+.gauge-fill.riesgo { stroke: var(--tier-red); }
 
 .gauge-center {
   position: absolute;
@@ -353,6 +359,9 @@ button {
   color: var(--cream);
   line-height: 1;
 }
+.gauge-pct.fuerte { color: var(--tier-green); }
+.gauge-pct.medio { color: var(--tier-orange); }
+.gauge-pct.riesgo { color: var(--tier-red); }
 
 .gauge-pct-label {
   font-size: 11px;
@@ -377,9 +386,9 @@ button {
   text-align: center;
   margin-bottom: 6px;
 }
-.result-band.fuerte { color: #7fbf8f; }
-.result-band.medio { color: var(--coral); }
-.result-band.riesgo { color: #e0503a; }
+.result-band.fuerte { color: var(--tier-green); }
+.result-band.medio { color: var(--tier-orange); }
+.result-band.riesgo { color: var(--tier-red); }
 
 .result-tagline {
   color: var(--cream-dim);
@@ -417,6 +426,17 @@ button {
   width: 0%;
   transition: width 0.6s ease;
 }
+.pillar-bar-fill.fuerte { background: var(--tier-green); }
+.pillar-bar-fill.medio { background: var(--tier-orange); }
+.pillar-bar-fill.riesgo { background: var(--tier-red); }
+
+.pillar-tier-note {
+  font-size: 12px;
+  margin-top: 5px;
+}
+.pillar-tier-note.fuerte { color: var(--tier-green); }
+.pillar-tier-note.medio { color: var(--tier-orange); }
+.pillar-tier-note.riesgo { color: var(--tier-red); }
 
 .risk-card {
   background: var(--ink-card);

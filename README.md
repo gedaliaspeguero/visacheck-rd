@@ -49,6 +49,33 @@ Después de cualquier cambio, recarga la página y prueba distintas combinacione
 respuestas para confirmar que las bandas se sienten justas (no debería ser fácil caer
 en FUERTE o en RIESGO sin razón).
 
+## Agregar preguntas condicionales (follow-ups)
+
+Algunas respuestas pueden abrir una pregunta extra que solo ve esa persona (ej. si
+dices que tienes familiar en EEUU, te pregunta cuánto tiempo lleva allá). Esto vive
+en `FOLLOW_UPS` dentro de `scoring.js`. Para agregar una nueva, añade un objeto al
+array:
+
+```js
+{
+  afterQuestionId: "q9_familia_eeuu",       // después de qué pregunta se evalúa
+  trigger: (value) => value === "si_estatus" || value === "si_sin_estatus",
+  question: {
+    id: "q9b_tiempo_familia",
+    parentId: "q9_familia_eeuu",             // debe repetir afterQuestionId
+    pillar: "familiar",
+    type: "single",
+    text: "¿Cuánto tiempo tiene tu familiar viviendo en EEUU?",
+    options: [ /* igual que cualquier pregunta normal */ ],
+  },
+}
+```
+
+`app.js` la inserta/quita automáticamente del flujo según la respuesta — no hace
+falta tocar la navegación. Las respuestas de follow-ups no suman puntos por defecto
+(para no romper el presupuesto de 100 pts), pero pueden alimentar flags nuevos en
+`computeFlags()` — ver el flag `FAM5` como ejemplo de cómo usarlas.
+
 ## Deploy a Cloudflare Pages (recomendado, 3 pasos)
 
 Al ser un sitio estático puro, no necesita ningún archivo de configuración.

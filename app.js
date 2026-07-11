@@ -6,6 +6,7 @@ const state = {
   answers: {},
   userName: "",
   caseNumber: null,
+  flow: [...QUESTIONS], // lista dinámica: preguntas base + follow-ups que se activen
 };
 
 let isTransitioning = false;
@@ -40,7 +41,7 @@ function goBack() {
   } else if (state.step === "name") {
     transitionTo(() => {
       state.step = "question";
-      state.questionIndex = QUESTIONS.length - 1;
+      state.questionIndex = state.flow.length - 1;
     });
   }
 }
@@ -77,7 +78,7 @@ function render() {
 function updateProgressHeader() {
   if (state.step === "question") {
     progressHeader.hidden = false;
-    const pct = ((state.questionIndex) / QUESTIONS.length) * 100;
+    const pct = ((state.questionIndex) / state.flow.length) * 100;
     progressFill.style.width = `${pct}%`;
     backBtn.style.visibility = "visible";
   } else if (state.step === "name") {
@@ -105,6 +106,7 @@ function renderIntro() {
     transitionTo(() => {
       state.step = "question";
       state.questionIndex = 0;
+      state.flow = [...QUESTIONS];
     });
   });
   return el;
@@ -112,7 +114,7 @@ function renderIntro() {
 
 // ---------- Question ----------
 function renderQuestion() {
-  const q = QUESTIONS[state.questionIndex];
+  const q = state.flow[state.questionIndex];
   const el = document.createElement("div");
   el.className = "screen";
 
@@ -144,6 +146,7 @@ function renderQuestion() {
         handleMultiSelect(q, opt, card, list);
       } else {
         state.answers[q.id] = opt.value;
+        syncFollowUpsFor(q);
         goToNextQuestion();
       }
     });
@@ -190,12 +193,35 @@ function handleMultiContinue(question, listEl) {
     setTimeout(() => listEl.classList.remove("shake"), 320);
     return;
   }
+  syncFollowUpsFor(question);
   goToNextQuestion();
+}
+
+// Inserta o quita la pregunta de seguimiento de `question` en state.flow según la
+// respuesta actual. Se llama cada vez que se responde esa pregunta (incluso si el
+// usuario vuelve atrás y cambia su respuesta), así el flujo siempre queda
+// consistente con lo que la persona realmente contestó.
+function syncFollowUpsFor(question) {
+  const rule = FOLLOW_UPS.find((f) => f.afterQuestionId === question.id);
+  if (!rule) return;
+
+  const existingIdx = state.flow.findIndex((q) => q.id === rule.question.id);
+  if (existingIdx !== -1) {
+    state.flow.splice(existingIdx, 1);
+    delete state.answers[rule.question.id];
+  }
+
+  const answer = state.answers[question.id];
+  const matches = Array.isArray(answer) ? answer.some((v) => rule.trigger(v)) : rule.trigger(answer);
+  if (matches) {
+    const parentIdx = state.flow.findIndex((q) => q.id === question.id);
+    state.flow.splice(parentIdx + 1, 0, rule.question);
+  }
 }
 
 function goToNextQuestion() {
   transitionTo(() => {
-    if (state.questionIndex < QUESTIONS.length - 1) {
+    if (state.questionIndex < state.flow.length - 1) {
       state.questionIndex += 1;
     } else {
       state.step = "name";
@@ -242,10 +268,12 @@ function renderResult() {
       const score = result.pillarScores[key];
       const max = result.pillarMax[key];
       const pct = Math.round((score / max) * 100);
+      const tier = getPillarTier(score, max);
       return `
         <div class="pillar-row">
           <div class="pillar-row-label"><span>${pillar.label}</span><span>${score}/${max}</span></div>
-          <div class="pillar-bar-track"><div class="pillar-bar-fill" data-pct="${pct}" style="width:0%"></div></div>
+          <div class="pillar-bar-track"><div class="pillar-bar-fill ${tier}" data-pct="${pct}" style="width:0%"></div></div>
+          <p class="pillar-tier-note ${tier}">${t.pillarTierNote[tier]}</p>
         </div>
       `;
     })
@@ -259,12 +287,12 @@ function renderResult() {
     <div class="gauge-wrap">
       <svg class="gauge-svg" viewBox="0 0 120 120">
         <circle class="gauge-track" cx="60" cy="60" r="${GAUGE_RADIUS}" />
-        <circle class="gauge-fill" cx="60" cy="60" r="${GAUGE_RADIUS}"
+        <circle class="gauge-fill ${result.band}" cx="60" cy="60" r="${GAUGE_RADIUS}"
           data-pct="${result.approvalPercentage}"
           style="stroke-dasharray:${gaugeCircumference};stroke-dashoffset:${gaugeCircumference}" />
       </svg>
       <div class="gauge-center">
-        <span class="gauge-pct">${result.approvalPercentage}%</span>
+        <span class="gauge-pct ${result.band}">${result.approvalPercentage}%</span>
         <span class="gauge-pct-label">${t.probabilityLabel}</span>
       </div>
     </div>

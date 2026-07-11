@@ -28,6 +28,11 @@ const CONFIG = {
   RESULT: {
     probabilityLabel: "Probabilidad estimada de aprobación",
     probabilityNote: "Estimación basada en los factores de tu perfil — no es una predicción oficial ni garantiza la decisión consular.",
+    pillarTierNote: {
+      fuerte: "Uno de tus puntos más fuertes.",
+      medio: "Vas bien, pero hay espacio para reforzarlo.",
+      riesgo: "Área que conviene trabajar antes de aplicar.",
+    },
     bandLabels: {
       fuerte: "Perfil fuerte",
       medio: "Perfil medio",

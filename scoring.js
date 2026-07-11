@@ -49,6 +49,16 @@ function computeApprovalPercentage(totalScore) {
   return Math.round(Math.min(APPROVAL_PCT_MAX, Math.max(APPROVAL_PCT_MIN, totalScore)));
 }
 
+// Clasifica un pilar individual en fuerte/medio/riesgo según su % dentro de su
+// propio máximo — mismos cortes que las bandas generales (70/40), así el color
+// y el texto de cada pilar son consistentes con el resultado global.
+function getPillarTier(score, max) {
+  const pct = (score / max) * 100;
+  if (pct >= 70) return "fuerte";
+  if (pct >= 40) return "medio";
+  return "riesgo";
+}
+
 // Cada pregunta: id, pilar, texto, tipo (single|multi), opciones con puntos.
 // `capPoints` (solo en multiselect) limita la suma máxima de esa pregunta aunque
 // se marquen varias opciones que sumarían más — evita que una sola pregunta
@@ -212,6 +222,31 @@ const QUESTIONS = [
   },
 ];
 
+// Preguntas de seguimiento (follow-up): se insertan dinámicamente justo después de
+// la pregunta padre SOLO si la respuesta activa el `trigger`. Cada persona ve un
+// flujo distinto según sus respuestas — eso le da más veracidad al test.
+// No suman puntos directo (para no romper el presupuesto de 100 pts entre pilares),
+// pero pueden alimentar flags con más contexto (ver computeFlags). Para agregar una
+// nueva, solo añade un objeto más a este array — app.js las maneja genéricamente.
+const FOLLOW_UPS = [
+  {
+    afterQuestionId: "q9_familia_eeuu",
+    trigger: (value) => value === "si_estatus" || value === "si_sin_estatus",
+    question: {
+      id: "q9b_tiempo_familia",
+      parentId: "q9_familia_eeuu",
+      pillar: "familiar",
+      type: "single",
+      text: "¿Cuánto tiempo tiene tu familiar viviendo en EEUU?",
+      options: [
+        { value: "menos_2", label: "Menos de 2 años" },
+        { value: "2_5", label: "2 – 5 años" },
+        { value: "mas_5", label: "Más de 5 años" },
+      ],
+    },
+  },
+];
+
 // Flags: no suman/restan puntos — se usan para el mensaje de WhatsApp (mini-CRM)
 // y podrían usarse a futuro para personalizar el routing del reporte pago.
 function computeFlags(answers) {
@@ -230,6 +265,11 @@ function computeFlags(answers) {
 
   if (answers.q9_familia_eeuu === "si_sin_estatus") {
     flags.push({ code: "FSE", label: "Familiar en EEUU sin estatus legal" });
+  }
+
+  const familiaEnEeuu = answers.q9_familia_eeuu === "si_estatus" || answers.q9_familia_eeuu === "si_sin_estatus";
+  if (familiaEnEeuu && answers.q9b_tiempo_familia === "mas_5") {
+    flags.push({ code: "FAM5", label: "Familiar en EEUU establecido hace más de 5 años" });
   }
 
   const tieneCuentaPropia = Array.isArray(answers.q4_situacion) && answers.q4_situacion.includes("cuenta_propia");
