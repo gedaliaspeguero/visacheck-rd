@@ -8,6 +8,21 @@ const CONFIG = {
 
   BRAND_NAME: "VisaCheck RD",
 
+  // Analytics y pixels — deja en "" los que no uses y no se carga nada.
+  // Los eventos del embudo (quiz_start, quiz_complete, whatsapp_click, share_click)
+  // se disparan automáticamente a los pixels que estén configurados.
+  ANALYTICS: {
+    // Cloudflare Web Analytics: dashboard de Cloudflare → Analytics & Logs →
+    // Web Analytics → Add a site → copia el "token" del snippet.
+    CLOUDFLARE_TOKEN: "",
+    // Meta Pixel: business.facebook.com → Administrador de eventos → crear pixel →
+    // copia el ID numérico (ej. "1234567890").
+    META_PIXEL_ID: "",
+    // TikTok Pixel: ads.tiktok.com → Assets → Events → Web Events → crea el pixel →
+    // copia el ID (ej. "ABC123DEF456").
+    TIKTOK_PIXEL_ID: "",
+  },
+
   INTRO: {
     eyebrow: "Evaluación de perfil B1/B2",
     headline: "¿Qué tan preparado está tu perfil para la visa americana?",

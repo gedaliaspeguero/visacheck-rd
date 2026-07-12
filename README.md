@@ -76,6 +76,31 @@ falta tocar la navegación. Las respuestas de follow-ups no suman puntos por def
 (para no romper el presupuesto de 100 pts), pero pueden alimentar flags nuevos en
 `computeFlags()` — ver el flag `FAM5` como ejemplo de cómo usarlas.
 
+## Activar analytics y pixels (medir el embudo)
+
+En `config.js` → `ANALYTICS` hay 3 espacios, todos opcionales (vacío = no carga nada):
+
+1. **Cloudflare Web Analytics** (visitas, gratis, sin cookies): dashboard de
+   Cloudflare → Analytics & Logs → Web Analytics → Add a site → copia el token
+   del snippet y pégalo en `CLOUDFLARE_TOKEN`.
+2. **Meta Pixel** (para anuncios/retargeting en Facebook/Instagram):
+   business.facebook.com → Administrador de eventos → crear pixel → pega el ID
+   numérico en `META_PIXEL_ID`.
+3. **TikTok Pixel**: ads.tiktok.com → Assets → Events → Web Events → crea el
+   pixel → pega el ID en `TIKTOK_PIXEL_ID`.
+
+Con los pixels activos, la app manda automáticamente estos eventos del embudo:
+
+| Evento | Cuándo |
+|---|---|
+| `quiz_start` | Toca "Evaluar mi perfil gratis" |
+| `quiz_complete` | Termina las preguntas (pantalla de nombre → resultado) |
+| `whatsapp_click` | Toca el CTA de WhatsApp (también manda `Lead` a Meta y `Contact` a TikTok, los eventos que sus algoritmos usan para optimizar anuncios) |
+| `share_click` | Toca "Compartir este test" |
+
+Con eso puedes ver en cada plataforma cuánta gente empieza, cuánta termina y
+cuánta escribe — y hacer retargeting a los que se quedaron a mitad.
+
 ## Deploy a Cloudflare Pages (recomendado, 3 pasos)
 
 Al ser un sitio estático puro, no necesita ningún archivo de configuración.
